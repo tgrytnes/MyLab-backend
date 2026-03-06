@@ -1,0 +1,23 @@
+{
+  "id": "emma-vitamin-d-2026-03-01",
+  "patient_id": "patient-emma-lawson",
+  "title": "Vitamin D",
+  "date": "2026-03-01",
+  "status": "attention",
+  "summary": "Slightly low",
+  "is_new": true,
+  "explanation": "Your vitamin D is a little below the usual range. This is common in winter and easy to follow up.",
+  "recommended_action": "Discuss supplements or more sunlight exposure with your doctor.",
+  "report_url": "/reports/emma-vitamin-d-2026-03-01.pdf",
+  "values": [
+    {
+      "name": "Vitamin D",
+      "value": 24,
+      "unit": "ng/mL",
+      "reference_range": "30 - 100",
+      "min": 30,
+      "max": 100,
+      "status": "attention"
+    }
+  ]
+}

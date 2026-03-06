@@ -1,0 +1,23 @@
+{
+  "id": "noah-crp-2026-02-20",
+  "patient_id": "patient-noah-fischer",
+  "title": "Inflammation Marker",
+  "date": "2026-02-20",
+  "status": "attention",
+  "summary": "CRP mildly raised",
+  "is_new": false,
+  "explanation": "Your CRP is slightly above the usual range and should be interpreted together with symptoms.",
+  "recommended_action": "Wait for clinician review if this test was ordered during illness.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "CRP",
+      "value": 8.1,
+      "unit": "mg/L",
+      "reference_range": "0 - 5",
+      "min": 0,
+      "max": 5,
+      "status": "attention"
+    }
+  ]
+}

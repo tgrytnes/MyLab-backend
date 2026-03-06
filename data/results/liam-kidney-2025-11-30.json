@@ -1,0 +1,32 @@
+{
+  "id": "liam-kidney-2025-11-30",
+  "patient_id": "patient-liam-carter",
+  "title": "Kidney Function",
+  "date": "2025-11-30",
+  "status": "attention",
+  "summary": "Mildly reduced filtration estimate",
+  "is_new": false,
+  "explanation": "One kidney marker is a little outside the usual range and may need routine follow-up.",
+  "recommended_action": "Discuss hydration and repeat monitoring with your doctor.",
+  "report_url": "/reports/liam-kidney-2025-11-30.pdf",
+  "values": [
+    {
+      "name": "eGFR",
+      "value": 58,
+      "unit": "mL/min",
+      "reference_range": "60 - 120",
+      "min": 60,
+      "max": 120,
+      "status": "attention"
+    },
+    {
+      "name": "Creatinine",
+      "value": 1.28,
+      "unit": "mg/dL",
+      "reference_range": "0.7 - 1.2",
+      "min": 0.7,
+      "max": 1.2,
+      "status": "attention"
+    }
+  ]
+}

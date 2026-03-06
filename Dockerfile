@@ -10,6 +10,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY pyproject.toml README.md ./
 COPY app ./app
+COPY data ./data
 
 RUN pip install .
 

@@ -1,0 +1,23 @@
+{
+  "id": "emma-thyroid-2026-02-14",
+  "patient_id": "patient-emma-lawson",
+  "title": "Thyroid Panel",
+  "date": "2026-02-14",
+  "status": "normal",
+  "summary": "Thyroid function looks stable",
+  "is_new": false,
+  "explanation": "Your thyroid hormone levels are within the expected range.",
+  "recommended_action": "Continue current treatment plan if prescribed.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "TSH",
+      "value": 1.9,
+      "unit": "mIU/L",
+      "reference_range": "0.4 - 4.0",
+      "min": 0.4,
+      "max": 4.0,
+      "status": "normal"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "emma-ferritin-2026-01-22",
+  "patient_id": "patient-emma-lawson",
+  "title": "Ferritin",
+  "date": "2026-01-22",
+  "status": "attention",
+  "summary": "Iron stores are low",
+  "is_new": false,
+  "explanation": "Your ferritin is below the usual range, which can happen when iron stores are reduced.",
+  "recommended_action": "Review iron intake and discuss follow-up testing if symptoms continue.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "Ferritin",
+      "value": 14,
+      "unit": "ug/L",
+      "reference_range": "20 - 150",
+      "min": 20,
+      "max": 150,
+      "status": "attention"
+    }
+  ]
+}

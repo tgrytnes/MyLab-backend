@@ -1,0 +1,32 @@
+{
+  "id": "liam-liver-2026-01-19",
+  "patient_id": "patient-liam-carter",
+  "title": "Liver Enzymes",
+  "date": "2026-01-19",
+  "status": "normal",
+  "summary": "Liver values normal",
+  "is_new": false,
+  "explanation": "Your liver enzymes are within the expected range.",
+  "recommended_action": "No action needed.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "ALT",
+      "value": 27,
+      "unit": "U/L",
+      "reference_range": "0 - 55",
+      "min": 0,
+      "max": 55,
+      "status": "normal"
+    },
+    {
+      "name": "AST",
+      "value": 24,
+      "unit": "U/L",
+      "reference_range": "0 - 40",
+      "min": 0,
+      "max": 40,
+      "status": "normal"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "ava-celiac-2025-12-22",
+  "patient_id": "patient-ava-martinez",
+  "title": "Celiac Screen",
+  "date": "2025-12-22",
+  "status": "normal",
+  "summary": "No concerning marker elevation",
+  "is_new": false,
+  "explanation": "Your screening marker is not elevated in this test.",
+  "recommended_action": "Review with your doctor if symptoms continue.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "tTG IgA",
+      "value": 1.6,
+      "unit": "U/mL",
+      "reference_range": "0 - 7",
+      "min": 0,
+      "max": 7,
+      "status": "normal"
+    }
+  ]
+}

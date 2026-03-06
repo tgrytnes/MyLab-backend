@@ -1,0 +1,32 @@
+{
+  "id": "ava-electrolytes-2025-11-18",
+  "patient_id": "patient-ava-martinez",
+  "title": "Electrolytes",
+  "date": "2025-11-18",
+  "status": "normal",
+  "summary": "Salt balance is normal",
+  "is_new": false,
+  "explanation": "Your sodium and potassium are within the expected range.",
+  "recommended_action": "No action needed.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "Sodium",
+      "value": 139,
+      "unit": "mmol/L",
+      "reference_range": "135 - 145",
+      "min": 135,
+      "max": 145,
+      "status": "normal"
+    },
+    {
+      "name": "Potassium",
+      "value": 4.2,
+      "unit": "mmol/L",
+      "reference_range": "3.5 - 5.1",
+      "min": 3.5,
+      "max": 5.1,
+      "status": "normal"
+    }
+  ]
+}

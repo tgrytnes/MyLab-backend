@@ -1,0 +1,23 @@
+{
+  "id": "ava-allergy-2026-03-05",
+  "patient_id": "patient-ava-martinez",
+  "title": "Allergy Panel",
+  "date": "2026-03-05",
+  "status": "attention",
+  "summary": "Several sensitivities detected",
+  "is_new": true,
+  "explanation": "This panel shows elevated sensitivity markers for a few allergens and should be reviewed with your clinician.",
+  "recommended_action": "Discuss symptom history and next steps with your doctor.",
+  "report_url": "/reports/ava-allergy-2026-03-05.pdf",
+  "values": [
+    {
+      "name": "Total IgE",
+      "value": 214,
+      "unit": "kU/L",
+      "reference_range": "0 - 100",
+      "min": 0,
+      "max": 100,
+      "status": "attention"
+    }
+  ]
+}

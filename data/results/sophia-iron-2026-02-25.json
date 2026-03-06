@@ -1,0 +1,23 @@
+{
+  "id": "sophia-iron-2026-02-25",
+  "patient_id": "patient-sophia-nguyen",
+  "title": "Iron Studies",
+  "date": "2026-02-25",
+  "status": "attention",
+  "summary": "Iron stores trending low",
+  "is_new": false,
+  "explanation": "Your iron stores are below the usual range and could be discussed at your next check-up.",
+  "recommended_action": "Review supplementation with your doctor.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "Ferritin",
+      "value": 11,
+      "unit": "ug/L",
+      "reference_range": "20 - 150",
+      "min": 20,
+      "max": 150,
+      "status": "attention"
+    }
+  ]
+}

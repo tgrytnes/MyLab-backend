@@ -1,0 +1,32 @@
+{
+  "id": "emma-lipid-2025-12-18",
+  "patient_id": "patient-emma-lawson",
+  "title": "Lipid Panel",
+  "date": "2025-12-18",
+  "status": "normal",
+  "summary": "Cholesterol profile looks balanced",
+  "is_new": false,
+  "explanation": "Your cholesterol and triglyceride values are within a healthy range.",
+  "recommended_action": "Maintain your current lifestyle.",
+  "report_url": "/reports/emma-lipid-2025-12-18.pdf",
+  "values": [
+    {
+      "name": "LDL",
+      "value": 102,
+      "unit": "mg/dL",
+      "reference_range": "0 - 130",
+      "min": 0,
+      "max": 130,
+      "status": "normal"
+    },
+    {
+      "name": "HDL",
+      "value": 61,
+      "unit": "mg/dL",
+      "reference_range": "40 - 90",
+      "min": 40,
+      "max": 90,
+      "status": "normal"
+    }
+  ]
+}

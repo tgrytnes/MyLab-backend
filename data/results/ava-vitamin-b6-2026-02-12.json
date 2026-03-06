@@ -1,0 +1,23 @@
+{
+  "id": "ava-vitamin-b6-2026-02-12",
+  "patient_id": "patient-ava-martinez",
+  "title": "Vitamin B6",
+  "date": "2026-02-12",
+  "status": "normal",
+  "summary": "Vitamin level looks good",
+  "is_new": false,
+  "explanation": "Your vitamin B6 level is within the expected range.",
+  "recommended_action": "No action needed.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "Vitamin B6",
+      "value": 18,
+      "unit": "ug/L",
+      "reference_range": "5 - 30",
+      "min": 5,
+      "max": 30,
+      "status": "normal"
+    }
+  ]
+}

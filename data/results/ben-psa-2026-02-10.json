@@ -1,0 +1,23 @@
+{
+  "id": "ben-psa-2026-02-10",
+  "patient_id": "patient-ben-weber",
+  "title": "PSA",
+  "date": "2026-02-10",
+  "status": "critical",
+  "summary": "Markedly elevated value",
+  "is_new": false,
+  "explanation": "This PSA result is clearly above the usual range and should be reviewed promptly with your doctor.",
+  "recommended_action": "Please contact your doctor to discuss the result.",
+  "report_url": "/reports/ben-psa-2026-02-10.pdf",
+  "values": [
+    {
+      "name": "PSA",
+      "value": 8.7,
+      "unit": "ng/mL",
+      "reference_range": "0 - 4.0",
+      "min": 0,
+      "max": 4.0,
+      "status": "critical"
+    }
+  ]
+}

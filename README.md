@@ -4,6 +4,7 @@ FastAPI backend for the MyLab weekend demo. It serves realistic lab-result JSON 
 
 ## Endpoints
 
+- `GET /demo-accounts`
 - `POST /login`
 - `GET /me`
 - `GET /results`
@@ -36,9 +37,6 @@ Run it on a server:
 docker run -d \
   --name mylab-backend \
   -p 8000:8000 \
-  -e MYLAB_DEMO_EMAIL=demo@mylab.app \
-  -e MYLAB_DEMO_PASSWORD=demo123 \
-  -e MYLAB_DEMO_TOKEN=demo-token \
   mylab-backend
 ```
 
@@ -48,9 +46,7 @@ Useful environment variables:
 
 - `MYLAB_HOST`
 - `MYLAB_PORT`
-- `MYLAB_DEMO_EMAIL`
-- `MYLAB_DEMO_PASSWORD`
-- `MYLAB_DEMO_TOKEN`
+- `MYLAB_DATA_DIR`
 
 If you want to run the published image from GitHub Container Registry instead of building locally:
 
@@ -70,8 +66,14 @@ python3 -m ruff check .
 
 ## Demo Credentials
 
-- Email: `demo@mylab.app`
-- Password: `demo123`
+- Emma Lawson: `emma.lawson@mylab.demo` / `demo-emma`
+- Liam Carter: `liam.carter@mylab.demo` / `demo-liam`
+- Sophia Nguyen: `sophia.nguyen@mylab.demo` / `demo-sophia`
+- Noah Fischer: `noah.fischer@mylab.demo` / `demo-noah`
+- Ava Martinez: `ava.martinez@mylab.demo` / `demo-ava`
+- Ben Weber: `ben.weber@mylab.demo` / `demo-ben`
+
+The demo data is stored in `data/patients.json` and `data/results/*.json`.
 
 ## CI/CD
 

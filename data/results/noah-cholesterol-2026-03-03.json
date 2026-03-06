@@ -1,0 +1,32 @@
+{
+  "id": "noah-cholesterol-2026-03-03",
+  "patient_id": "patient-noah-fischer",
+  "title": "Cholesterol",
+  "date": "2026-03-03",
+  "status": "critical",
+  "summary": "LDL is clearly elevated",
+  "is_new": true,
+  "explanation": "Your LDL cholesterol is above the recommended range and deserves physician follow-up.",
+  "recommended_action": "Contact your doctor to discuss the result and next steps.",
+  "report_url": "/reports/noah-cholesterol-2026-03-03.pdf",
+  "values": [
+    {
+      "name": "LDL",
+      "value": 188,
+      "unit": "mg/dL",
+      "reference_range": "0 - 130",
+      "min": 0,
+      "max": 130,
+      "status": "critical"
+    },
+    {
+      "name": "HDL",
+      "value": 39,
+      "unit": "mg/dL",
+      "reference_range": "40 - 90",
+      "min": 40,
+      "max": 90,
+      "status": "attention"
+    }
+  ]
+}

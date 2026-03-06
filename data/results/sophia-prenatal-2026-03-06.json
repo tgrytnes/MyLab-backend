@@ -1,0 +1,23 @@
+{
+  "id": "sophia-prenatal-2026-03-06",
+  "patient_id": "patient-sophia-nguyen",
+  "title": "Prenatal Panel",
+  "date": "2026-03-06",
+  "status": "normal",
+  "summary": "Routine prenatal screen looks reassuring",
+  "is_new": true,
+  "explanation": "Your routine prenatal markers are in the expected range for this screening panel.",
+  "recommended_action": "Continue planned prenatal follow-up.",
+  "report_url": "/reports/sophia-prenatal-2026-03-06.pdf",
+  "values": [
+    {
+      "name": "Hemoglobin",
+      "value": 12.4,
+      "unit": "g/dL",
+      "reference_range": "11.0 - 15.0",
+      "min": 11.0,
+      "max": 15.0,
+      "status": "normal"
+    }
+  ]
+}

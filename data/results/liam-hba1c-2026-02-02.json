@@ -1,0 +1,23 @@
+{
+  "id": "liam-hba1c-2026-02-02",
+  "patient_id": "patient-liam-carter",
+  "title": "HbA1c",
+  "date": "2026-02-02",
+  "status": "attention",
+  "summary": "Slightly above target",
+  "is_new": false,
+  "explanation": "Your long-term blood sugar marker is just above the preferred range.",
+  "recommended_action": "Discuss repeat testing and lifestyle steps with your doctor.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "HbA1c",
+      "value": 5.9,
+      "unit": "%",
+      "reference_range": "4.0 - 5.6",
+      "min": 4.0,
+      "max": 5.6,
+      "status": "attention"
+    }
+  ]
+}

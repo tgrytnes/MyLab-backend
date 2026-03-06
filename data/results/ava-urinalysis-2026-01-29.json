@@ -1,0 +1,23 @@
+{
+  "id": "ava-urinalysis-2026-01-29",
+  "patient_id": "patient-ava-martinez",
+  "title": "Urinalysis",
+  "date": "2026-01-29",
+  "status": "attention",
+  "summary": "Mild inflammatory signs",
+  "is_new": false,
+  "explanation": "A few urine markers are slightly outside the usual range and may fit with a minor urinary irritation.",
+  "recommended_action": "Contact your doctor if symptoms are present.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "Leukocytes",
+      "value": 18,
+      "unit": "/uL",
+      "reference_range": "0 - 10",
+      "min": 0,
+      "max": 10,
+      "status": "attention"
+    }
+  ]
+}

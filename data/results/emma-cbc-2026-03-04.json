@@ -1,0 +1,32 @@
+{
+  "id": "emma-cbc-2026-03-04",
+  "patient_id": "patient-emma-lawson",
+  "title": "Complete Blood Count",
+  "date": "2026-03-04",
+  "status": "normal",
+  "summary": "Stable blood count",
+  "is_new": false,
+  "explanation": "Your blood count is within the expected range and does not suggest anemia or infection.",
+  "recommended_action": "No action needed.",
+  "report_url": "/reports/emma-cbc-2026-03-04.pdf",
+  "values": [
+    {
+      "name": "Hemoglobin",
+      "value": 13.6,
+      "unit": "g/dL",
+      "reference_range": "12.0 - 16.0",
+      "min": 12.0,
+      "max": 16.0,
+      "status": "normal"
+    },
+    {
+      "name": "White Blood Cells",
+      "value": 5.9,
+      "unit": "x10^9/L",
+      "reference_range": "4.0 - 11.0",
+      "min": 4.0,
+      "max": 11.0,
+      "status": "normal"
+    }
+  ]
+}

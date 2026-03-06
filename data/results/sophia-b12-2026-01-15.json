@@ -1,0 +1,23 @@
+{
+  "id": "sophia-b12-2026-01-15",
+  "patient_id": "patient-sophia-nguyen",
+  "title": "Vitamin B12",
+  "date": "2026-01-15",
+  "status": "normal",
+  "summary": "B12 level is adequate",
+  "is_new": false,
+  "explanation": "Your vitamin B12 level is within the expected range.",
+  "recommended_action": "No action needed.",
+  "report_url": null,
+  "values": [
+    {
+      "name": "Vitamin B12",
+      "value": 412,
+      "unit": "pg/mL",
+      "reference_range": "200 - 900",
+      "min": 200,
+      "max": 900,
+      "status": "normal"
+    }
+  ]
+}

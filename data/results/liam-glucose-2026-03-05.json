@@ -1,0 +1,23 @@
+{
+  "id": "liam-glucose-2026-03-05",
+  "patient_id": "patient-liam-carter",
+  "title": "Fasting Glucose",
+  "date": "2026-03-05",
+  "status": "attention",
+  "summary": "Borderline elevated",
+  "is_new": true,
+  "explanation": "Your fasting glucose is slightly above the usual range and may need follow-up with your physician.",
+  "recommended_action": "Wait for physician review and keep an eye on diet and exercise.",
+  "report_url": "/reports/liam-glucose-2026-03-05.pdf",
+  "values": [
+    {
+      "name": "Glucose",
+      "value": 106,
+      "unit": "mg/dL",
+      "reference_range": "70 - 99",
+      "min": 70,
+      "max": 99,
+      "status": "attention"
+    }
+  ]
+}
