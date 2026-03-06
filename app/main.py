@@ -5,11 +5,8 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
+from app.config import settings
 from app.demo_data import get_results
-
-DEMO_EMAIL = "demo@mylab.app"
-DEMO_PASSWORD = "demo123"
-DEMO_TOKEN = "demo-token"
 
 app = FastAPI(title="MyLab Demo API", version="0.1.0")
 
@@ -26,7 +23,7 @@ class ReadRequest(BaseModel):
 
 
 def _require_auth(authorization: Annotated[str | None, Header()] = None) -> None:
-    if authorization != f"Bearer {DEMO_TOKEN}":
+    if authorization != f"Bearer {settings.demo_token}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
 
@@ -37,10 +34,13 @@ def healthcheck() -> dict[str, str]:
 
 @app.post("/login")
 def login(payload: LoginRequest) -> dict[str, str]:
-    if payload.email != DEMO_EMAIL or payload.password != DEMO_PASSWORD:
+    if (
+        payload.email != settings.demo_email
+        or payload.password != settings.demo_password
+    ):
         raise HTTPException(status_code=401, detail="Invalid demo credentials")
 
-    return {"token": DEMO_TOKEN}
+    return {"token": settings.demo_token}
 
 
 @app.get("/me")
