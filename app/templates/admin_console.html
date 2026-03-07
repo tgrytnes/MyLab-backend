@@ -97,7 +97,10 @@
           </div>
           <div class="patient-grid">
             {% for patient in patient_cards %}
-              <a class="patient-card" href="/admin?kind=patient&identifier={{ patient.id }}">
+              <a
+                class="patient-card {% if selected_patient and selected_patient.id == patient.id %}patient-card--selected{% endif %}"
+                href="/admin?kind=patient&identifier={{ patient.id }}"
+              >
                 <div class="patient-card__header">
                   <h3>{{ patient.name }}</h3>
                   {% if patient.new_results %}
@@ -113,6 +116,76 @@
           </div>
         </section>
 
+        <section class="panel panel--patient">
+          <div class="panel__header">
+            <div>
+              <span class="panel__kicker">Selected Patient</span>
+              <h2>Patient Data</h2>
+            </div>
+            {% if selected_patient %}
+              <span class="badge badge--accent">{{ selected_patient_results|length }} reports</span>
+            {% endif %}
+          </div>
+
+          {% if selected_patient %}
+            <div class="detail-card">
+              <div class="detail-card__headline">
+                <div>
+                  <h3>{{ selected_patient.first_name }} {{ selected_patient.last_name }}</h3>
+                  <p>{{ selected_patient.id }}</p>
+                </div>
+                {% if selected_result %}
+                  <span class="badge">{{ selected_result.title }}</span>
+                {% endif %}
+              </div>
+
+              <div class="detail-grid">
+                <article>
+                  <span class="detail-label">Email</span>
+                  <strong>{{ selected_patient.email }}</strong>
+                </article>
+                <article>
+                  <span class="detail-label">Password</span>
+                  <strong>{{ selected_patient.password }}</strong>
+                </article>
+                <article>
+                  <span class="detail-label">Token</span>
+                  <strong class="mono">{{ selected_patient.token }}</strong>
+                </article>
+                <article>
+                  <span class="detail-label">Linked Results</span>
+                  <strong>{{ selected_patient.result_ids|length }}</strong>
+                </article>
+              </div>
+
+              <div class="subpanel">
+                <div class="subpanel__header">
+                  <span class="detail-label">Patient Results</span>
+                </div>
+                <div class="linked-results">
+                  {% for result in selected_patient_results %}
+                    <a
+                      class="linked-result {% if preview_kind == 'result' and preview_id == result.id %}linked-result--selected{% endif %}"
+                      href="/admin?kind=result&identifier={{ result.id }}"
+                    >
+                      <div>
+                        <strong>{{ result.title }}</strong>
+                        <span>{{ result.date }}</span>
+                      </div>
+                      <span class="status-dot status-dot--{{ result.status }}"></span>
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="empty-state">
+              <h3>No patient selected</h3>
+              <p>Choose a patient from the dataset list to inspect their record and linked results.</p>
+            </div>
+          {% endif %}
+        </section>
+
         <section class="panel panel--browser">
           <div class="panel__header">
             <div>
@@ -122,7 +195,10 @@
           </div>
           <div class="browser-list">
             {% for result in result_browser %}
-              <a class="browser-row" href="/admin?kind=result&identifier={{ result.id }}">
+              <a
+                class="browser-row {% if preview_kind == 'result' and preview_id == result.id %}browser-row--selected{% endif %}"
+                href="/admin?kind=result&identifier={{ result.id }}"
+              >
                 <div>
                   <strong>{{ result.title }}</strong>
                   <span>{{ result.patient_name }}</span>
@@ -140,7 +216,7 @@
           <div class="panel__header">
             <div>
               <span class="panel__kicker">Inspection</span>
-              <h2>JSON Preview</h2>
+              <h2>Raw JSON Preview</h2>
             </div>
             {% if preview %}
               <span class="badge">{{ preview_kind }}</span>

@@ -101,6 +101,14 @@ class DemoRepository:
     def patient_by_token(self, token: str) -> dict | None:
         return self.patients_by_token.get(token)
 
+    def patient_by_id(self, patient_id: str) -> dict | None:
+        patient = self.patients_by_id.get(patient_id)
+        return deepcopy(patient) if patient is not None else None
+
+    def result_by_id(self, result_id: str) -> dict | None:
+        result = self.results_by_id.get(result_id)
+        return deepcopy(result) if result is not None else None
+
     def patient_results(self, patient: dict) -> list[dict]:
         result_ids = patient["result_ids"]
         patient_results = [deepcopy(self.results_by_id[result_id]) for result_id in result_ids]

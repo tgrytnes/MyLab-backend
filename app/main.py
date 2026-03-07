@@ -58,6 +58,9 @@ def _admin_context(
     preview = None
     chosen_kind = preview_kind
     chosen_id = preview_id
+    selected_patient = None
+    selected_result = None
+    selected_patient_results: list[dict] = []
 
     if chosen_kind and chosen_id:
         preview = repository.preview_document(chosen_kind, chosen_id)
@@ -70,11 +73,24 @@ def _admin_context(
         chosen_id = patient_cards[0]["id"]
         preview = repository.preview_document(chosen_kind, chosen_id)
 
+    if chosen_kind == "patient" and chosen_id:
+        selected_patient = repository.patient_by_id(chosen_id)
+    elif chosen_kind == "result" and chosen_id:
+        selected_result = repository.result_by_id(chosen_id)
+        if selected_result is not None:
+            selected_patient = repository.patient_by_id(selected_result["patient_id"])
+
+    if selected_patient is not None:
+        selected_patient_results = repository.patient_results(selected_patient)
+
     return {
         "request": request,
         "stats": repository.stats(),
         "patient_cards": patient_cards,
         "result_browser": result_browser,
+        "selected_patient": selected_patient,
+        "selected_result": selected_result,
+        "selected_patient_results": selected_patient_results,
         "preview_kind": chosen_kind,
         "preview_id": chosen_id,
         "preview": preview,
