@@ -19,8 +19,15 @@
     <div class="shell">
       <header class="hero">
         <div class="hero__copy">
-          <span class="eyebrow">MyLab Backend</span>
-          <h1>Admin Console</h1>
+          <div class="hero__topline">
+            <div>
+              <span class="eyebrow">MyLab Backend</span>
+              <h1>Admin Console</h1>
+            </div>
+            <button class="button button--primary" type="button" data-open-upload>
+              Upload Dataset
+            </button>
+          </div>
           <p>
             Upload patient and result JSON, validate it instantly, and inspect the
             live dataset without restarting the API.
@@ -47,47 +54,6 @@
       </header>
 
       <main class="layout">
-        <section class="panel panel--upload">
-          <div class="panel__header">
-            <div>
-              <span class="panel__kicker">Live Ingestion</span>
-              <h2>Upload JSON</h2>
-            </div>
-            <span class="badge">Hot reload</span>
-          </div>
-
-          <form class="upload-form" action="/admin/upload" method="post" enctype="multipart/form-data">
-            <label class="dropzone" for="files">
-              <input id="files" name="files" type="file" accept=".json,application/json" multiple />
-              <span class="dropzone__title">Drop JSON files here or browse</span>
-              <span class="dropzone__subtitle">
-                Accepts individual patient records, full patient arrays, result records, and result arrays.
-              </span>
-              <span class="dropzone__hint" id="file-count">No files selected</span>
-            </label>
-
-            <div class="upload-form__actions">
-              <button class="button button--primary" type="submit">Upload Dataset</button>
-              <span class="helper-text">Changes are written into the backend data directory immediately.</span>
-            </div>
-          </form>
-
-          {% if upload_results %}
-            <div class="upload-results">
-              {% for item in upload_results %}
-                <article class="upload-result upload-result--{{ item.status }}">
-                  <div class="upload-result__meta">
-                    <span class="upload-result__file">{{ item.filename }}</span>
-                    <span class="badge badge--{{ item.status }}">{{ item.kind }}</span>
-                  </div>
-                  <p class="upload-result__message">{{ item.message }}</p>
-                  <pre class="json-block">{{ item.preview }}</pre>
-                </article>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </section>
-
         <section class="panel panel--overview">
           <div class="panel__header">
             <div>
@@ -237,11 +203,71 @@
           {% endif %}
         </section>
       </main>
+
+      {% if upload_results %}
+        <section class="panel panel--results-log">
+          <div class="panel__header">
+            <div>
+              <span class="panel__kicker">Latest Upload</span>
+              <h2>Upload Results</h2>
+            </div>
+          </div>
+          <div class="upload-results">
+            {% for item in upload_results %}
+              <article class="upload-result upload-result--{{ item.status }}">
+                <div class="upload-result__meta">
+                  <span class="upload-result__file">{{ item.filename }}</span>
+                  <span class="badge badge--{{ item.status }}">{{ item.kind }}</span>
+                </div>
+                <p class="upload-result__message">{{ item.message }}</p>
+                <pre class="json-block">{{ item.preview }}</pre>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
     </div>
 
+    <dialog class="upload-modal" id="upload-modal">
+      <form class="upload-modal__card" action="/admin/upload" method="post" enctype="multipart/form-data">
+        <div class="panel__header panel__header--modal">
+          <div>
+            <span class="panel__kicker">Live Ingestion</span>
+            <h2>Upload JSON</h2>
+          </div>
+          <button class="button button--ghost" type="button" data-close-upload>Close</button>
+        </div>
+
+        <label class="dropzone" for="files">
+          <input id="files" name="files" type="file" accept=".json,application/json" multiple />
+          <span class="dropzone__title">Drop JSON files here or browse</span>
+          <span class="dropzone__subtitle">
+            Accepts patient records, patient arrays, result records, and result arrays.
+          </span>
+          <span class="dropzone__hint" id="file-count">No files selected</span>
+        </label>
+
+        <div class="upload-form__actions">
+          <button class="button button--primary" type="submit">Upload Dataset</button>
+          <span class="helper-text">Changes are written into the backend data directory immediately.</span>
+        </div>
+      </form>
+    </dialog>
+
     <script>
+      const modal = document.getElementById('upload-modal');
+      const openButton = document.querySelector('[data-open-upload]');
+      const closeButton = document.querySelector('[data-close-upload]');
       const input = document.getElementById('files');
       const label = document.getElementById('file-count');
+
+      openButton?.addEventListener('click', () => {
+        modal?.showModal();
+      });
+
+      closeButton?.addEventListener('click', () => {
+        modal?.close();
+      });
 
       input?.addEventListener('change', () => {
         if (!input.files?.length) {
