@@ -118,3 +118,23 @@ def test_mark_result_as_read() -> None:
         "id": "emma-vitamin-d-2026-03-01",
         "is_new": False,
     }
+
+
+def test_report_pdf_is_available_for_own_result() -> None:
+    response = client.get(
+        "/reports/emma-vitamin-d-2026-03-01.pdf",
+        headers=EMMA_AUTH_HEADER,
+    )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert response.content.startswith(b"%PDF")
+
+
+def test_report_pdf_is_not_available_for_other_patient() -> None:
+    response = client.get(
+        "/reports/emma-vitamin-d-2026-03-01.pdf",
+        headers=LIAM_AUTH_HEADER,
+    )
+
+    assert response.status_code == 404

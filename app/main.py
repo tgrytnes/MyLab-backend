@@ -4,9 +4,11 @@ from copy import deepcopy
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
 
 from app.demo_data import load_demo_data
+from app.reporting import build_report_pdf
 
 app = FastAPI(title="MyLab Demo API", version="0.1.0")
 
@@ -114,3 +116,21 @@ def mark_result_as_read(
         "id": result_id,
         "is_new": _results_by_id[result_id]["is_new"],
     }
+
+
+@app.get("/reports/{report_name}")
+def report_pdf(report_name: str, patient: dict = Depends(_current_patient)) -> Response:
+    for result_id in patient["result_ids"]:
+        result = _results_by_id[result_id]
+        report_url = result.get("report_url")
+        if report_url and report_url.endswith(report_name):
+            pdf_bytes = build_report_pdf(patient, result)
+            return Response(
+                content=pdf_bytes,
+                media_type="application/pdf",
+                headers={
+                    "Content-Disposition": f'inline; filename="{report_name}"',
+                },
+            )
+
+    raise HTTPException(status_code=404, detail="Report not found")
