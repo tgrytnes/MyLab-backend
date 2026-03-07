@@ -1,0 +1,23 @@
+{
+  "id": "liam-glucose-2025-08-28",
+  "patient_id": "patient-liam-carter",
+  "title": "Fasting Glucose",
+  "date": "2025-08-28",
+  "status": "attention",
+  "summary": "Fasting glucose was mildly elevated in this earlier reading",
+  "is_new": false,
+  "explanation": "This earlier fasting glucose value was slightly above the usual range.",
+  "recommended_action": "Review the result with your doctor if needed.",
+  "report_url": "/reports/liam-glucose-2025-08-28.pdf",
+  "values": [
+    {
+      "name": "Glucose",
+      "value": 112,
+      "unit": "mg/dL",
+      "reference_range": "70 - 99",
+      "min": 70,
+      "max": 99,
+      "status": "attention"
+    }
+  ]
+}

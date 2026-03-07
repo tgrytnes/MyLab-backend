@@ -1,0 +1,23 @@
+{
+  "id": "emma-vitamin-d-2025-08-14",
+  "patient_id": "patient-emma-lawson",
+  "title": "Vitamin D",
+  "date": "2025-08-14",
+  "status": "attention",
+  "summary": "Vitamin D was low in this earlier sample",
+  "is_new": false,
+  "explanation": "This earlier vitamin D reading was below the reference range.",
+  "recommended_action": "Discuss the result with your doctor if needed.",
+  "report_url": "/reports/emma-vitamin-d-2025-08-14.pdf",
+  "values": [
+    {
+      "name": "Vitamin D",
+      "value": 16,
+      "unit": "ng/mL",
+      "reference_range": "30 - 100",
+      "min": 30,
+      "max": 100,
+      "status": "attention"
+    }
+  ]
+}

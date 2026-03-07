@@ -1,0 +1,32 @@
+{
+  "id": "noah-cholesterol-2025-08-26",
+  "patient_id": "patient-noah-fischer",
+  "title": "Cholesterol",
+  "date": "2025-08-26",
+  "status": "attention",
+  "summary": "Cholesterol already showed a borderline LDL elevation",
+  "is_new": false,
+  "explanation": "This earlier cholesterol panel already showed LDL above the reference range.",
+  "recommended_action": "Discuss the result trend with your doctor.",
+  "report_url": "/reports/noah-cholesterol-2025-08-26.pdf",
+  "values": [
+    {
+      "name": "LDL",
+      "value": 152,
+      "unit": "mg/dL",
+      "reference_range": "0 - 130",
+      "min": 0,
+      "max": 130,
+      "status": "attention"
+    },
+    {
+      "name": "HDL",
+      "value": 45,
+      "unit": "mg/dL",
+      "reference_range": "40 - 90",
+      "min": 40,
+      "max": 90,
+      "status": "normal"
+    }
+  ]
+}
