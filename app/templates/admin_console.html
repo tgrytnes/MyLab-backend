@@ -111,6 +111,10 @@
                   <strong>{{ selected_patient.email }}</strong>
                 </article>
                 <article>
+                  <span class="detail-label">Birth Date</span>
+                  <strong>{{ selected_patient.birth_date }}</strong>
+                </article>
+                <article>
                   <span class="detail-label">Password</span>
                   <strong>{{ selected_patient.password }}</strong>
                 </article>
@@ -119,9 +123,39 @@
                   <strong class="mono">{{ selected_patient.token }}</strong>
                 </article>
                 <article>
-                  <span class="detail-label">Linked Results</span>
-                  <strong>{{ selected_patient.result_ids|length }}</strong>
+                  <span class="detail-label">Access Code</span>
+                  <strong class="mono">{{ selected_patient.access_code }}</strong>
                 </article>
+              </div>
+
+              <div class="access-card">
+                <div class="access-card__copy">
+                  <span class="detail-label">Mobile Access QR</span>
+                  <h4>Scan on the patient phone and confirm the birth date.</h4>
+                  <p>
+                    The QR opens the app with a patient-specific access code. After
+                    birth-date verification, the app loads the full profile and every
+                    linked result automatically.
+                  </p>
+                  <div class="access-card__meta">
+                    <span class="badge badge--accent">Deep link ready</span>
+                    <code class="mono">{{ selected_patient_access_link }}</code>
+                  </div>
+                  <a
+                    class="button button--ghost"
+                    href="/admin/patients/{{ selected_patient.id }}/qr.png"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open QR Image
+                  </a>
+                </div>
+                <div class="access-card__qr">
+                  <img
+                    src="/admin/patients/{{ selected_patient.id }}/qr.png"
+                    alt="QR code for {{ selected_patient.first_name }} {{ selected_patient.last_name }}"
+                  />
+                </div>
               </div>
 
               <div class="subpanel">

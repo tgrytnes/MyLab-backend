@@ -38,6 +38,7 @@ def test_admin_console_renders() -> None:
     assert response.status_code == 200
     assert "MyLab Admin Console" in response.text
     assert "Upload JSON" in response.text
+    assert "Mobile Access QR" in response.text
 
 
 def test_demo_accounts() -> None:
@@ -69,6 +70,39 @@ def test_login_success() -> None:
 
     assert response.status_code == 200
     assert response.json() == {"token": "demo-token-emma"}
+
+
+def test_access_exchange_success(isolated_repository: DemoRepository) -> None:
+    emma = isolated_repository.patient_by_id("patient-emma-lawson")
+    assert emma is not None
+
+    response = client.post(
+        "/access/exchange",
+        json={"code": emma["access_code"], "birth_date": emma["birth_date"]},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "token": "demo-token-emma",
+        "patient": {
+            "id": "patient-emma-lawson",
+            "first_name": "Emma",
+            "last_name": "Lawson",
+        },
+    }
+
+
+def test_access_exchange_rejects_wrong_birth_date(isolated_repository: DemoRepository) -> None:
+    emma = isolated_repository.patient_by_id("patient-emma-lawson")
+    assert emma is not None
+
+    response = client.post(
+        "/access/exchange",
+        json={"code": emma["access_code"], "birth_date": "2000-01-01"},
+    )
+
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Birth date did not match this access code"
 
 
 def test_login_failure() -> None:
@@ -163,6 +197,17 @@ def test_report_pdf_is_not_available_for_other_patient() -> None:
     assert response.status_code == 404
 
 
+def test_admin_patient_qr_is_available(isolated_repository: DemoRepository) -> None:
+    emma = isolated_repository.patient_by_id("patient-emma-lawson")
+    assert emma is not None
+
+    response = client.get(f"/admin/patients/{emma['id']}/qr.png")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert response.content.startswith(b"\x89PNG")
+
+
 def test_admin_upload_result_json(isolated_repository: DemoRepository) -> None:
     payload = {
         "id": "emma-magnesium-2026-03-07",
@@ -219,3 +264,33 @@ def test_admin_upload_invalid_json_shows_error(isolated_repository: DemoReposito
 
     assert response.status_code == 200
     assert "Invalid JSON" in response.text
+
+
+def test_uploaded_patient_gets_access_code(isolated_repository: DemoRepository) -> None:
+    payload = {
+        "id": "patient-isla-ross",
+        "first_name": "Isla",
+        "last_name": "Ross",
+        "email": "isla.ross@mylab.demo",
+        "birth_date": "1990-06-17",
+        "password": "demo-isla",
+        "token": "demo-token-isla",
+        "result_ids": [],
+    }
+
+    response = client.post(
+        "/admin/upload",
+        files={
+            "files": (
+                "isla-ross.json",
+                json.dumps(payload).encode("utf-8"),
+                "application/json",
+            )
+        },
+    )
+
+    saved_patient = isolated_repository.patient_by_id("patient-isla-ross")
+    assert response.status_code == 200
+    assert saved_patient is not None
+    assert saved_patient["birth_date"] == "1990-06-17"
+    assert saved_patient["access_code"]

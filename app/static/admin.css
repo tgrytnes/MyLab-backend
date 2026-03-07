@@ -426,6 +426,60 @@ body {
   border: 1px solid var(--line);
 }
 
+.access-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) 180px;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(15, 158, 144, 0.14), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 249, 242, 0.96));
+  border: 1px solid var(--line);
+}
+
+.access-card__copy h4 {
+  margin: 0 0 8px;
+  font-size: 1.18rem;
+}
+
+.access-card__copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.access-card__meta {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.access-card__meta code {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(16, 34, 31, 0.06);
+  overflow-wrap: anywhere;
+}
+
+.access-card__qr {
+  display: flex;
+  justify-content: center;
+}
+
+.access-card__qr img {
+  display: block;
+  width: 180px;
+  height: 180px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: white;
+  padding: 10px;
+  box-shadow: 0 16px 28px rgba(15, 34, 31, 0.08);
+}
+
 .detail-label {
   display: block;
   margin-bottom: 8px;
@@ -629,6 +683,10 @@ body {
   }
 
   .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .access-card {
     grid-template-columns: 1fr;
   }
 

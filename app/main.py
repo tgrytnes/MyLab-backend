@@ -10,6 +10,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from app.config import settings
+from app.qr_codes import build_qr_png
 from app.reporting import build_report_pdf
 from app.repository import DemoRepository, UploadOutcome
 
@@ -19,7 +20,11 @@ app_dir = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(app_dir / "templates"))
 app.mount("/admin/static", StaticFiles(directory=str(app_dir / "static")), name="admin_static")
 
-repository = DemoRepository(Path(settings.data_dir))
+repository = DemoRepository(
+    Path(settings.data_dir),
+    qr_secret=settings.qr_secret,
+    mobile_scheme=settings.mobile_scheme,
+)
 
 
 class LoginRequest(BaseModel):
@@ -29,6 +34,22 @@ class LoginRequest(BaseModel):
 
 class ReadRequest(BaseModel):
     is_read: bool = True
+
+
+class AccessExchangeRequest(BaseModel):
+    code: str
+    birth_date: str
+
+
+def _session_payload(patient: dict) -> dict[str, object]:
+    return {
+        "token": patient["token"],
+        "patient": {
+            "id": patient["id"],
+            "first_name": patient["first_name"],
+            "last_name": patient["last_name"],
+        },
+    }
 
 
 def _current_patient(
@@ -61,6 +82,7 @@ def _admin_context(
     selected_patient = None
     selected_result = None
     selected_patient_results: list[dict] = []
+    selected_patient_access_link = None
 
     if chosen_kind and chosen_id:
         preview = repository.preview_document(chosen_kind, chosen_id)
@@ -82,6 +104,7 @@ def _admin_context(
 
     if selected_patient is not None:
         selected_patient_results = repository.patient_results(selected_patient)
+        selected_patient_access_link = repository.access_link(selected_patient)
 
     return {
         "request": request,
@@ -91,6 +114,7 @@ def _admin_context(
         "selected_patient": selected_patient,
         "selected_result": selected_result,
         "selected_patient_results": selected_patient_results,
+        "selected_patient_access_link": selected_patient_access_link,
         "preview_kind": chosen_kind,
         "preview_id": chosen_id,
         "preview": preview,
@@ -135,6 +159,21 @@ async def admin_upload(
     )
 
 
+@app.get("/admin/patients/{patient_id}/qr.png")
+def admin_patient_qr(patient_id: str) -> Response:
+    patient = repository.patient_by_id(patient_id)
+    if patient is None:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    return Response(
+        content=build_qr_png(repository.access_link(patient)),
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f'inline; filename="{patient_id}-access.png"',
+        },
+    )
+
+
 @app.get("/demo-accounts")
 def demo_accounts() -> dict[str, list[dict[str, str]]]:
     return {"accounts": repository.list_demo_accounts()}
@@ -147,6 +186,15 @@ def login(payload: LoginRequest) -> dict[str, str]:
         raise HTTPException(status_code=401, detail="Invalid demo credentials")
 
     return {"token": patient["token"]}
+
+
+@app.post("/access/exchange")
+def access_exchange(payload: AccessExchangeRequest) -> dict[str, object]:
+    patient = repository.patient_by_access_code(payload.code)
+    if patient is None or patient["birth_date"] != payload.birth_date:
+        raise HTTPException(status_code=401, detail="Birth date did not match this access code")
+
+    return _session_payload(patient)
 
 
 @app.get("/me")

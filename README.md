@@ -5,8 +5,10 @@ FastAPI backend for the MyLab weekend demo. It serves realistic lab-result JSON 
 ## Endpoints
 
 - `GET /admin`
+- `GET /admin/patients/{id}/qr.png`
 - `GET /demo-accounts`
 - `POST /login`
+- `POST /access/exchange`
 - `GET /me`
 - `GET /results`
 - `GET /results/{id}`
@@ -30,7 +32,20 @@ Admin console:
 open http://127.0.0.1:8000/admin
 ```
 
-The admin console provides a polished web interface for uploading patient/result JSON and reviewing the live dataset immediately after upload.
+The admin console provides a polished web interface for uploading patient/result JSON, reviewing the live dataset immediately after upload, and generating a patient-specific QR code that opens the mobile app access flow.
+
+Patient JSON must include:
+
+- `id`
+- `first_name`
+- `last_name`
+- `email`
+- `birth_date` in `YYYY-MM-DD`
+- `password`
+- `token`
+- `result_ids`
+
+The backend generates an `access_code` automatically if the uploaded patient JSON does not contain one already.
 
 ## Docker
 
@@ -56,6 +71,8 @@ Useful environment variables:
 - `MYLAB_HOST`
 - `MYLAB_PORT`
 - `MYLAB_DATA_DIR`
+- `MYLAB_MOBILE_SCHEME`
+- `MYLAB_QR_SECRET`
 
 If you want to run the published image from GitHub Container Registry instead of building locally:
 
@@ -83,6 +100,13 @@ python3 -m ruff check .
 - Ben Weber: `ben.weber@mylab.demo` / `demo-ben`
 
 The demo data is stored in `data/patients.json` and `data/results/*.json`.
+
+## QR Access Flow
+
+- Select a patient in `/admin`
+- Open or download the generated QR image
+- The QR points to `mylab://access?code=...`
+- The Flutter app opens, asks for birth date, exchanges the QR access code through `POST /access/exchange`, and then loads all results linked to that patient profile
 
 ## CI/CD
 

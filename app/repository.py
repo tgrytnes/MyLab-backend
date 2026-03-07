@@ -1,6 +1,9 @@
+import hashlib
+import hmac
 import json
 from copy import deepcopy
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 PATIENT_REQUIRED_FIELDS = {
@@ -8,6 +11,7 @@ PATIENT_REQUIRED_FIELDS = {
     "first_name",
     "last_name",
     "email",
+    "birth_date",
     "password",
     "token",
     "result_ids",
@@ -49,9 +53,17 @@ class UploadOutcome:
 
 
 class DemoRepository:
-    def __init__(self, data_dir: Path) -> None:
+    def __init__(
+        self,
+        data_dir: Path,
+        *,
+        qr_secret: str = "mylab-demo-qr-secret",
+        mobile_scheme: str = "mylab",
+    ) -> None:
         self.data_dir = data_dir
         self.results_dir = self.data_dir / "results"
+        self.qr_secret = qr_secret.encode("utf-8")
+        self.mobile_scheme = mobile_scheme
         self.reload()
 
     def reload(self) -> None:
@@ -59,7 +71,11 @@ class DemoRepository:
         self.results_dir.mkdir(parents=True, exist_ok=True)
 
         patients = self._load_json(self.data_dir / "patients.json")
-        self.patients_by_id = {patient["id"]: patient for patient in patients}
+        normalized_patients = [self._validated_patient(patient) for patient in patients]
+        if normalized_patients != patients:
+            self._write_json(self.data_dir / "patients.json", normalized_patients)
+
+        self.patients_by_id = {patient["id"]: patient for patient in normalized_patients}
         self.results_by_id = {}
 
         for result_path in sorted(self.results_dir.glob("*.json")):
@@ -71,6 +87,9 @@ class DemoRepository:
         }
         self.patients_by_token = {
             patient["token"]: patient for patient in self.patients_by_id.values()
+        }
+        self.patients_by_access_code = {
+            patient["access_code"]: patient for patient in self.patients_by_id.values()
         }
 
     def _load_json(self, path: Path) -> dict | list:
@@ -101,6 +120,10 @@ class DemoRepository:
     def patient_by_token(self, token: str) -> dict | None:
         return self.patients_by_token.get(token)
 
+    def patient_by_access_code(self, access_code: str) -> dict | None:
+        patient = self.patients_by_access_code.get(access_code)
+        return deepcopy(patient) if patient is not None else None
+
     def patient_by_id(self, patient_id: str) -> dict | None:
         patient = self.patients_by_id.get(patient_id)
         return deepcopy(patient) if patient is not None else None
@@ -108,6 +131,9 @@ class DemoRepository:
     def result_by_id(self, result_id: str) -> dict | None:
         result = self.results_by_id.get(result_id)
         return deepcopy(result) if result is not None else None
+
+    def access_link(self, patient: dict) -> str:
+        return f"{self.mobile_scheme}://access?code={patient['access_code']}"
 
     def patient_results(self, patient: dict) -> list[dict]:
         result_ids = patient["result_ids"]
@@ -312,7 +338,18 @@ class DemoRepository:
         if not isinstance(patient["result_ids"], list):
             raise ValueError("Patient field 'result_ids' must be a list.")
 
-        return deepcopy(patient)
+        try:
+            date.fromisoformat(str(patient["birth_date"]))
+        except ValueError as exc:
+            raise ValueError(
+                "Patient field 'birth_date' must be an ISO date in YYYY-MM-DD format."
+            ) from exc
+
+        normalized = deepcopy(patient)
+        access_code = str(normalized.get("access_code", "")).strip()
+        if not access_code:
+            normalized["access_code"] = self._generate_access_code(normalized)
+        return normalized
 
     def _validated_result(self, result: dict) -> dict:
         missing = RESULT_REQUIRED_FIELDS - result.keys()
@@ -334,3 +371,14 @@ class DemoRepository:
                 )
 
         return deepcopy(result)
+
+    def _generate_access_code(self, patient: dict) -> str:
+        payload = "::".join(
+            [
+                patient["id"],
+                patient["birth_date"],
+                patient["email"],
+            ]
+        )
+        digest = hmac.new(self.qr_secret, payload.encode("utf-8"), hashlib.sha256).hexdigest()
+        return digest[:20]

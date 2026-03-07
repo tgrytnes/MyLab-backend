@@ -4,6 +4,7 @@
     "first_name": "Emma",
     "last_name": "Lawson",
     "email": "emma.lawson@mylab.demo",
+    "birth_date": "1989-04-18",
     "password": "demo-emma",
     "token": "demo-token-emma",
     "result_ids": [
@@ -12,13 +13,15 @@
       "emma-thyroid-2026-02-14",
       "emma-ferritin-2026-01-22",
       "emma-lipid-2025-12-18"
-    ]
+    ],
+    "access_code": "ec271fcadbf4d4a07d55"
   },
   {
     "id": "patient-liam-carter",
     "first_name": "Liam",
     "last_name": "Carter",
     "email": "liam.carter@mylab.demo",
+    "birth_date": "1985-11-02",
     "password": "demo-liam",
     "token": "demo-token-liam",
     "result_ids": [
@@ -26,38 +29,44 @@
       "liam-hba1c-2026-02-02",
       "liam-liver-2026-01-19",
       "liam-kidney-2025-11-30"
-    ]
+    ],
+    "access_code": "a4525a3496c276c28a28"
   },
   {
     "id": "patient-sophia-nguyen",
     "first_name": "Sophia",
     "last_name": "Nguyen",
     "email": "sophia.nguyen@mylab.demo",
+    "birth_date": "1991-07-24",
     "password": "demo-sophia",
     "token": "demo-token-sophia",
     "result_ids": [
       "sophia-prenatal-2026-03-06",
       "sophia-iron-2026-02-25",
       "sophia-b12-2026-01-15"
-    ]
+    ],
+    "access_code": "7f1b0b1490d109881b7d"
   },
   {
     "id": "patient-noah-fischer",
     "first_name": "Noah",
     "last_name": "Fischer",
     "email": "noah.fischer@mylab.demo",
+    "birth_date": "1979-03-12",
     "password": "demo-noah",
     "token": "demo-token-noah",
     "result_ids": [
       "noah-cholesterol-2026-03-03",
       "noah-crp-2026-02-20"
-    ]
+    ],
+    "access_code": "61210e70b9d11a1d7b0b"
   },
   {
     "id": "patient-ava-martinez",
     "first_name": "Ava",
     "last_name": "Martinez",
     "email": "ava.martinez@mylab.demo",
+    "birth_date": "1994-09-09",
     "password": "demo-ava",
     "token": "demo-token-ava",
     "result_ids": [
@@ -66,17 +75,20 @@
       "ava-urinalysis-2026-01-29",
       "ava-celiac-2025-12-22",
       "ava-electrolytes-2025-11-18"
-    ]
+    ],
+    "access_code": "5210612273b3310d66f5"
   },
   {
     "id": "patient-ben-weber",
     "first_name": "Ben",
     "last_name": "Weber",
     "email": "ben.weber@mylab.demo",
+    "birth_date": "1968-01-27",
     "password": "demo-ben",
     "token": "demo-token-ben",
     "result_ids": [
       "ben-psa-2026-02-10"
-    ]
+    ],
+    "access_code": "1e56601411ed2cc3c9fb"
   }
 ]
