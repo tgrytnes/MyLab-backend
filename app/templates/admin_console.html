@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MyLab Admin Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ request.url_for('admin_static', path='admin.css') }}"
+    />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="hero__copy">
+          <span class="eyebrow">MyLab Backend</span>
+          <h1>Admin Console</h1>
+          <p>
+            Upload patient and result JSON, validate it instantly, and inspect the
+            live dataset without restarting the API.
+          </p>
+        </div>
+        <div class="hero__stats">
+          <article class="stat-card">
+            <span class="stat-card__label">Patients</span>
+            <strong>{{ stats.patients }}</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-card__label">Results</span>
+            <strong>{{ stats.results }}</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-card__label">New Results</span>
+            <strong>{{ stats.new_results }}</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-card__label">Critical</span>
+            <strong>{{ stats.critical_results }}</strong>
+          </article>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel panel--upload">
+          <div class="panel__header">
+            <div>
+              <span class="panel__kicker">Live Ingestion</span>
+              <h2>Upload JSON</h2>
+            </div>
+            <span class="badge">Hot reload</span>
+          </div>
+
+          <form class="upload-form" action="/admin/upload" method="post" enctype="multipart/form-data">
+            <label class="dropzone" for="files">
+              <input id="files" name="files" type="file" accept=".json,application/json" multiple />
+              <span class="dropzone__title">Drop JSON files here or browse</span>
+              <span class="dropzone__subtitle">
+                Accepts individual patient records, full patient arrays, result records, and result arrays.
+              </span>
+              <span class="dropzone__hint" id="file-count">No files selected</span>
+            </label>
+
+            <div class="upload-form__actions">
+              <button class="button button--primary" type="submit">Upload Dataset</button>
+              <span class="helper-text">Changes are written into the backend data directory immediately.</span>
+            </div>
+          </form>
+
+          {% if upload_results %}
+            <div class="upload-results">
+              {% for item in upload_results %}
+                <article class="upload-result upload-result--{{ item.status }}">
+                  <div class="upload-result__meta">
+                    <span class="upload-result__file">{{ item.filename }}</span>
+                    <span class="badge badge--{{ item.status }}">{{ item.kind }}</span>
+                  </div>
+                  <p class="upload-result__message">{{ item.message }}</p>
+                  <pre class="json-block">{{ item.preview }}</pre>
+                </article>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </section>
+
+        <section class="panel panel--overview">
+          <div class="panel__header">
+            <div>
+              <span class="panel__kicker">Dataset</span>
+              <h2>Patients</h2>
+            </div>
+          </div>
+          <div class="patient-grid">
+            {% for patient in patient_cards %}
+              <a class="patient-card" href="/admin?kind=patient&identifier={{ patient.id }}">
+                <div class="patient-card__header">
+                  <h3>{{ patient.name }}</h3>
+                  {% if patient.new_results %}
+                    <span class="badge badge--accent">{{ patient.new_results }} new</span>
+                  {% endif %}
+                </div>
+                <p>{{ patient.email }}</p>
+                <div class="patient-card__metrics">
+                  <span>{{ patient.results }} reports</span>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel panel--browser">
+          <div class="panel__header">
+            <div>
+              <span class="panel__kicker">Document Browser</span>
+              <h2>Result JSON</h2>
+            </div>
+          </div>
+          <div class="browser-list">
+            {% for result in result_browser %}
+              <a class="browser-row" href="/admin?kind=result&identifier={{ result.id }}">
+                <div>
+                  <strong>{{ result.title }}</strong>
+                  <span>{{ result.patient_name }}</span>
+                </div>
+                <div class="browser-row__meta">
+                  <span class="status-dot status-dot--{{ result.status }}"></span>
+                  <span>{{ result.date }}</span>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="panel panel--preview">
+          <div class="panel__header">
+            <div>
+              <span class="panel__kicker">Inspection</span>
+              <h2>JSON Preview</h2>
+            </div>
+            {% if preview %}
+              <span class="badge">{{ preview_kind }}</span>
+            {% endif %}
+          </div>
+
+          {% if preview %}
+            <div class="preview-headline">
+              <strong>{{ preview[0] }}</strong>
+              <span>{{ preview_id }}</span>
+            </div>
+            <pre class="json-block json-block--large">{{ preview[1] }}</pre>
+          {% else %}
+            <div class="empty-state">
+              <h3>No preview selected</h3>
+              <p>Upload a JSON file or choose a patient/result from the browser.</p>
+            </div>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const input = document.getElementById('files');
+      const label = document.getElementById('file-count');
+
+      input?.addEventListener('change', () => {
+        if (!input.files?.length) {
+          label.textContent = 'No files selected';
+          return;
+        }
+
+        label.textContent = `${input.files.length} file${input.files.length === 1 ? '' : 's'} ready`;
+      });
+    </script>
+  </body>
+</html>

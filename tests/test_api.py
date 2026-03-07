@@ -1,8 +1,13 @@
+import json
+import shutil
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
+import app.main as main_module
 from app.main import app
+from app.repository import DemoRepository
 
 client = TestClient(app)
 
@@ -10,11 +15,29 @@ EMMA_AUTH_HEADER = {"Authorization": "Bearer demo-token-emma"}
 LIAM_AUTH_HEADER = {"Authorization": "Bearer demo-token-liam"}
 
 
+@pytest.fixture(autouse=True)
+def isolated_repository(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> DemoRepository:
+    source_data_dir = Path(__file__).resolve().parent.parent / "data"
+    temp_data_dir = tmp_path / "data"
+    shutil.copytree(source_data_dir, temp_data_dir)
+    repository = DemoRepository(temp_data_dir)
+    monkeypatch.setattr(main_module, "repository", repository)
+    return repository
+
+
 def test_healthcheck() -> None:
     response = client.get("/health")
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+
+def test_admin_console_renders() -> None:
+    response = client.get("/admin")
+
+    assert response.status_code == 200
+    assert "MyLab Admin Console" in response.text
+    assert "Upload JSON" in response.text
 
 
 def test_demo_accounts() -> None:
@@ -138,3 +161,61 @@ def test_report_pdf_is_not_available_for_other_patient() -> None:
     )
 
     assert response.status_code == 404
+
+
+def test_admin_upload_result_json(isolated_repository: DemoRepository) -> None:
+    payload = {
+        "id": "emma-magnesium-2026-03-07",
+        "patient_id": "patient-emma-lawson",
+        "title": "Magnesium",
+        "date": "2026-03-07",
+        "status": "normal",
+        "summary": "Magnesium is in range",
+        "is_new": True,
+        "explanation": "Your magnesium is within the expected range.",
+        "recommended_action": "No action needed.",
+        "report_url": None,
+        "values": [
+            {
+                "name": "Magnesium",
+                "value": 1.9,
+                "unit": "mg/dL",
+                "reference_range": "1.7 - 2.2",
+                "min": 1.7,
+                "max": 2.2,
+                "status": "normal",
+            }
+        ],
+    }
+
+    response = client.post(
+        "/admin/upload",
+        files={
+            "files": (
+                "emma-magnesium.json",
+                json.dumps(payload).encode("utf-8"),
+                "application/json",
+            )
+        },
+    )
+
+    assert response.status_code == 200
+    assert "Accepted 1 result record" in response.text
+    assert "emma-magnesium-2026-03-07" in response.text
+    assert (isolated_repository.results_dir / "emma-magnesium-2026-03-07.json").exists()
+
+
+def test_admin_upload_invalid_json_shows_error(isolated_repository: DemoRepository) -> None:
+    response = client.post(
+        "/admin/upload",
+        files={
+            "files": (
+                "broken.json",
+                b"{ this is not valid json",
+                "application/json",
+            )
+        },
+    )
+
+    assert response.status_code == 200
+    assert "Invalid JSON" in response.text

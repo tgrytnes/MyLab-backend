@@ -4,6 +4,7 @@ FastAPI backend for the MyLab weekend demo. It serves realistic lab-result JSON 
 
 ## Endpoints
 
+- `GET /admin`
 - `GET /demo-accounts`
 - `POST /login`
 - `GET /me`
@@ -22,6 +23,14 @@ uvicorn app.main:app --reload
 ```
 
 The API will start on `http://127.0.0.1:8000`.
+
+Admin console:
+
+```bash
+open http://127.0.0.1:8000/admin
+```
+
+The admin console provides a polished web interface for uploading patient/result JSON and reviewing the live dataset immediately after upload.
 
 ## Docker
 
