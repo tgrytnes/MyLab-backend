@@ -179,6 +179,11 @@ def demo_accounts() -> dict[str, list[dict[str, str]]]:
     return {"accounts": repository.list_demo_accounts()}
 
 
+@app.get("/demo-access-shortcuts")
+def demo_access_shortcuts() -> dict[str, list[dict[str, str]]]:
+    return {"shortcuts": repository.list_demo_access_shortcuts()}
+
+
 @app.post("/login")
 def login(payload: LoginRequest) -> dict[str, str]:
     patient = repository.patient_by_email(payload.email)

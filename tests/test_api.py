@@ -57,6 +57,16 @@ def test_demo_accounts() -> None:
     }
 
 
+def test_demo_access_shortcuts() -> None:
+    response = client.get("/demo-access-shortcuts")
+
+    body = response.json()
+    assert response.status_code == 200
+    assert len(body["shortcuts"]) == 6
+    assert all(shortcut["access_code"] for shortcut in body["shortcuts"])
+    assert all(shortcut["birth_date"] for shortcut in body["shortcuts"])
+
+
 def test_result_files_exist() -> None:
     results_dir = Path(__file__).resolve().parent.parent / "data" / "results"
     assert len(list(results_dir.glob("*.json"))) == 20

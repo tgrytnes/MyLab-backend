@@ -114,6 +114,18 @@ class DemoRepository:
             for patient in sorted(self.patients_by_id.values(), key=lambda item: item["first_name"])
         ]
 
+    def list_demo_access_shortcuts(self) -> list[dict[str, str]]:
+        return [
+            {
+                "id": patient["id"],
+                "first_name": patient["first_name"],
+                "last_name": patient["last_name"],
+                "access_code": patient["access_code"],
+                "birth_date": patient["birth_date"],
+            }
+            for patient in sorted(self.patients_by_id.values(), key=lambda item: item["first_name"])
+        ]
+
     def patient_by_email(self, email: str) -> dict | None:
         return self.patients_by_email.get(email)
 
