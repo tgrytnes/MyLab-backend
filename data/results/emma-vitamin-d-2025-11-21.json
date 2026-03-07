@@ -1,0 +1,23 @@
+{
+  "id": "emma-vitamin-d-2025-11-21",
+  "patient_id": "patient-emma-lawson",
+  "title": "Vitamin D",
+  "date": "2025-11-21",
+  "status": "attention",
+  "summary": "Vitamin D was low and has since improved",
+  "is_new": false,
+  "explanation": "Your vitamin D was below the reference range in this earlier sample.",
+  "recommended_action": "Discuss the result with your doctor if needed.",
+  "report_url": "/reports/emma-vitamin-d-2025-11-21.pdf",
+  "values": [
+    {
+      "name": "Vitamin D",
+      "value": 18,
+      "unit": "ng/mL",
+      "reference_range": "30 - 100",
+      "min": 30,
+      "max": 100,
+      "status": "attention"
+    }
+  ]
+}

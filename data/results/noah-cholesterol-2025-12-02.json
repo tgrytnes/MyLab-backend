@@ -1,0 +1,32 @@
+{
+  "id": "noah-cholesterol-2025-12-02",
+  "patient_id": "patient-noah-fischer",
+  "title": "Cholesterol",
+  "date": "2025-12-02",
+  "status": "attention",
+  "summary": "LDL was elevated and has worsened in the newer sample",
+  "is_new": false,
+  "explanation": "This earlier cholesterol result already showed LDL above the reference range.",
+  "recommended_action": "Discuss the result trend with your doctor.",
+  "report_url": "/reports/noah-cholesterol-2025-12-02.pdf",
+  "values": [
+    {
+      "name": "LDL",
+      "value": 166,
+      "unit": "mg/dL",
+      "reference_range": "0 - 130",
+      "min": 0,
+      "max": 130,
+      "status": "attention"
+    },
+    {
+      "name": "HDL",
+      "value": 42,
+      "unit": "mg/dL",
+      "reference_range": "40 - 90",
+      "min": 40,
+      "max": 90,
+      "status": "normal"
+    }
+  ]
+}

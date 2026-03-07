@@ -69,7 +69,7 @@ def test_demo_access_shortcuts() -> None:
 
 def test_result_files_exist() -> None:
     results_dir = Path(__file__).resolve().parent.parent / "data" / "results"
-    assert len(list(results_dir.glob("*.json"))) == 20
+    assert len(list(results_dir.glob("*.json"))) == 24
 
 
 def test_login_success() -> None:
@@ -147,7 +147,7 @@ def test_results_list_is_patient_specific() -> None:
 
     body = response.json()
     assert response.status_code == 200
-    assert len(body["results"]) == 5
+    assert len(body["results"]) == 7
     assert any(result["is_new"] for result in body["results"])
     assert all(result["patient_id"] == "patient-emma-lawson" for result in body["results"])
 
