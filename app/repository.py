@@ -3,7 +3,7 @@ import hmac
 import json
 from copy import deepcopy
 from dataclasses import dataclass
-from datetime import date
+from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 
 PATIENT_REQUIRED_FIELDS = {
@@ -31,6 +31,13 @@ RESULT_REQUIRED_FIELDS = {
     "values",
 }
 
+TIMELINE_EVENT_REQUIRED_FIELDS = {
+    "key",
+    "label",
+    "state",
+    "timestamp",
+}
+
 VALUE_REQUIRED_FIELDS = {
     "name",
     "value",
@@ -39,6 +46,19 @@ VALUE_REQUIRED_FIELDS = {
     "min",
     "max",
     "status",
+}
+
+EVENT_STATE_ORDER = {
+    "pending": 0,
+    "current": 1,
+    "completed": 2,
+}
+
+TIMELINE_EVENT_TYPES = {
+    "sample_collected": "sample_collected",
+    "in_analysis": "in_analysis",
+    "result_ready": "result_ready",
+    "physician_reviewed": "physician_reviewed",
 }
 
 
@@ -62,6 +82,7 @@ class DemoRepository:
     ) -> None:
         self.data_dir = data_dir
         self.results_dir = self.data_dir / "results"
+        self.events_path = self.data_dir / "events.json"
         self.qr_secret = qr_secret.encode("utf-8")
         self.mobile_scheme = mobile_scheme
         self.reload()
@@ -80,7 +101,10 @@ class DemoRepository:
 
         for result_path in sorted(self.results_dir.glob("*.json")):
             result = self._load_json(result_path)
-            self.results_by_id[result["id"]] = result
+            normalized_result = self._validated_result(result)
+            if normalized_result != result:
+                self._write_json(result_path, normalized_result)
+            self.results_by_id[normalized_result["id"]] = normalized_result
 
         self.patients_by_email = {
             patient["email"]: patient for patient in self.patients_by_id.values()
@@ -91,6 +115,11 @@ class DemoRepository:
         self.patients_by_access_code = {
             patient["access_code"]: patient for patient in self.patients_by_id.values()
         }
+        if self.events_path.exists():
+            events = self._load_json(self.events_path)
+            self.events = events if isinstance(events, list) else []
+        else:
+            self.events = []
 
     def _load_json(self, path: Path) -> dict | list:
         with path.open(encoding="utf-8") as file:
@@ -143,6 +172,22 @@ class DemoRepository:
     def result_by_id(self, result_id: str) -> dict | None:
         result = self.results_by_id.get(result_id)
         return deepcopy(result) if result is not None else None
+
+    def patient_events(self, patient: dict, since: datetime | None = None) -> list[dict]:
+        events = [
+            deepcopy(event)
+            for event in self.events
+            if event["patient_id"] == patient["id"]
+        ]
+        if since is not None:
+            events = [
+                event
+                for event in events
+                if datetime.fromisoformat(str(event["created_at"]).replace("Z", "+00:00")) > since
+            ]
+
+        events.sort(key=lambda item: item["created_at"], reverse=True)
+        return events
 
     def access_link(self, patient: dict) -> str:
         return f"{self.mobile_scheme}://access?code={patient['access_code']}"
@@ -231,6 +276,38 @@ class DemoRepository:
 
         title = payload["id"] if kind == "patient" else payload["title"]
         return title, json.dumps(payload, indent=2)
+
+    def save_document(
+        self,
+        kind: str,
+        identifier: str,
+        document_text: str,
+    ) -> tuple[str, str, dict]:
+        try:
+            payload = json.loads(document_text)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON: {exc}") from exc
+
+        if not isinstance(payload, dict):
+            raise ValueError("Edited JSON must be a single patient or result object.")
+
+        if kind == "patient":
+            patient = self._validated_patient(payload)
+            if patient["id"] != identifier:
+                raise ValueError("Edited patient id must match the selected document.")
+            self._upsert_patient(patient)
+            self.reload()
+            return kind, patient["id"], deepcopy(self.patients_by_id[patient["id"]])
+
+        if kind == "result":
+            result = self._validated_result(payload)
+            if result["id"] != identifier:
+                raise ValueError("Edited result id must match the selected document.")
+            self._upsert_result(result)
+            self.reload()
+            return kind, result["id"], deepcopy(self.results_by_id[result["id"]])
+
+        raise ValueError("Unknown document kind for edit save.")
 
     def process_uploads(self, uploads: list[tuple[str, bytes]]) -> list[UploadOutcome]:
         outcomes: list[UploadOutcome] = []
@@ -322,6 +399,7 @@ class DemoRepository:
         self._write_json(self.data_dir / "patients.json", patients)
 
     def _upsert_result(self, result: dict) -> None:
+        previous_result = self.results_by_id.get(result["id"])
         patient = self.patients_by_id.get(result["patient_id"])
         if patient is None:
             raise ValueError(
@@ -329,12 +407,25 @@ class DemoRepository:
                 f"for result '{result['id']}'."
             )
 
+        if previous_result is not None and previous_result["patient_id"] != result["patient_id"]:
+            previous_patient = self.patients_by_id.get(previous_result["patient_id"])
+            if previous_patient is not None:
+                previous_patient = deepcopy(previous_patient)
+                previous_patient["result_ids"] = [
+                    item for item in previous_patient["result_ids"] if item != result["id"]
+                ]
+                self._upsert_patient(previous_patient)
+
         self._write_json(self.results_dir / f"{result['id']}.json", result)
         result_ids = list(patient["result_ids"])
         if result["id"] not in result_ids:
             result_ids.append(result["id"])
             patient["result_ids"] = sorted(result_ids, reverse=True)
             self._upsert_patient(patient)
+
+        generated_events = self._events_for_result_change(previous_result, result)
+        if generated_events:
+            self._append_events(generated_events)
 
     def _is_patient_record(self, payload: object) -> bool:
         return isinstance(payload, dict) and PATIENT_REQUIRED_FIELDS.issubset(payload.keys())
@@ -382,7 +473,146 @@ class DemoRepository:
                     f"{', '.join(sorted(missing_value_fields))}."
                 )
 
-        return deepcopy(result)
+        normalized = deepcopy(result)
+        normalized["timeline"] = self._validated_timeline(
+            normalized.get("timeline"),
+            normalized,
+        )
+        return normalized
+
+    def _validated_timeline(self, timeline: object, result: dict) -> list[dict]:
+        if timeline is None:
+            return self._generated_timeline(result)
+
+        if not isinstance(timeline, list) or not timeline:
+            raise ValueError("Result field 'timeline' must be a non-empty list when provided.")
+
+        normalized_events: list[dict] = []
+        for event in timeline:
+            if not isinstance(event, dict):
+                raise ValueError("Every timeline event must be a JSON object.")
+
+            missing_fields = TIMELINE_EVENT_REQUIRED_FIELDS - event.keys()
+            if missing_fields:
+                raise ValueError(
+                    "Timeline event is missing fields: "
+                    f"{', '.join(sorted(missing_fields))}."
+                )
+
+            state = str(event["state"])
+            if state not in {"completed", "current", "pending"}:
+                raise ValueError(
+                    "Timeline event field 'state' must be one of "
+                    "'completed', 'current', or 'pending'."
+                )
+
+            timestamp = event["timestamp"]
+            if timestamp is not None:
+                try:
+                    datetime.fromisoformat(str(timestamp).replace("Z", "+00:00"))
+                except ValueError as exc:
+                    raise ValueError(
+                        "Timeline event field 'timestamp' must be an ISO datetime or null."
+                    ) from exc
+
+            normalized_events.append(deepcopy(event))
+
+        return normalized_events
+
+    def _append_events(self, events: list[dict]) -> None:
+        self.events.extend(events)
+        self.events.sort(key=lambda item: item["created_at"])
+        self._write_json(self.events_path, self.events)
+
+    def _events_for_result_change(self, previous: dict | None, current: dict) -> list[dict]:
+        now = datetime.now(UTC).isoformat().replace("+00:00", "Z")
+        generated_events: list[dict] = []
+
+        if previous is None:
+            generated_events.append(
+                {
+                    "id": f"evt-{current['id']}-new-result",
+                    "patient_id": current["patient_id"],
+                    "result_id": current["id"],
+                    "result_title": current["title"],
+                    "type": "new_result",
+                    "timeline_key": None,
+                    "created_at": now,
+                    "effective_at": current["date"],
+                }
+            )
+            return generated_events
+
+        previous_timeline = {
+            event["key"]: event for event in previous.get("timeline", [])
+        }
+        for event in current.get("timeline", []):
+            timeline_key = event["key"]
+            old_state = previous_timeline.get(timeline_key, {}).get("state", "pending")
+            new_state = event["state"]
+            if EVENT_STATE_ORDER.get(new_state, 0) <= EVENT_STATE_ORDER.get(old_state, 0):
+                continue
+            if old_state != "pending":
+                continue
+
+            generated_events.append(
+                {
+                    "id": (
+                        f"evt-{current['id']}-{timeline_key}-"
+                        f"{len(self.events) + len(generated_events) + 1}"
+                    ),
+                    "patient_id": current["patient_id"],
+                    "result_id": current["id"],
+                    "result_title": current["title"],
+                    "type": TIMELINE_EVENT_TYPES[timeline_key],
+                    "timeline_key": timeline_key,
+                    "created_at": now,
+                    "effective_at": event["timestamp"],
+                }
+            )
+
+        return generated_events
+
+    def _generated_timeline(self, result: dict) -> list[dict]:
+        result_date = date.fromisoformat(str(result["date"]))
+        sample_collected_at = datetime.combine(
+            result_date - timedelta(days=1),
+            time(hour=8, minute=20),
+        )
+        in_analysis_at = sample_collected_at + timedelta(hours=2, minutes=25)
+        result_ready_at = datetime.combine(result_date, time(hour=7, minute=45))
+        reviewed_at = datetime.combine(result_date, time(hour=13, minute=30))
+
+        review_state = "pending" if result["is_new"] else "completed"
+        review_timestamp = None if result["is_new"] else f"{reviewed_at.isoformat()}Z"
+        result_ready_state = "current" if result["is_new"] else "completed"
+
+        return [
+            {
+                "key": "sample_collected",
+                "label": "Sample collected",
+                "state": "completed",
+                "timestamp": f"{sample_collected_at.isoformat()}Z",
+            },
+            {
+                "key": "in_analysis",
+                "label": "In analysis",
+                "state": "completed",
+                "timestamp": f"{in_analysis_at.isoformat()}Z",
+            },
+            {
+                "key": "result_ready",
+                "label": "Result ready",
+                "state": result_ready_state,
+                "timestamp": f"{result_ready_at.isoformat()}Z",
+            },
+            {
+                "key": "physician_reviewed",
+                "label": "Physician reviewed",
+                "state": review_state,
+                "timestamp": review_timestamp,
+            },
+        ]
 
     def _generate_access_code(self, patient: dict) -> str:
         payload = "::".join(

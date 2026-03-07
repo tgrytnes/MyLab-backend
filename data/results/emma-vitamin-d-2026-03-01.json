@@ -19,5 +19,31 @@
       "max": 100,
       "status": "attention"
     }
+  ],
+  "timeline": [
+    {
+      "key": "sample_collected",
+      "label": "Sample collected",
+      "state": "completed",
+      "timestamp": "2026-02-28T08:20:00Z"
+    },
+    {
+      "key": "in_analysis",
+      "label": "In analysis",
+      "state": "completed",
+      "timestamp": "2026-02-28T10:45:00Z"
+    },
+    {
+      "key": "result_ready",
+      "label": "Result ready",
+      "state": "current",
+      "timestamp": "2026-03-01T07:45:00Z"
+    },
+    {
+      "key": "physician_reviewed",
+      "label": "Physician reviewed",
+      "state": "pending",
+      "timestamp": null
+    }
   ]
 }

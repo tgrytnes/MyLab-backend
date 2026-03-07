@@ -28,5 +28,31 @@
       "max": 5.1,
       "status": "normal"
     }
+  ],
+  "timeline": [
+    {
+      "key": "sample_collected",
+      "label": "Sample collected",
+      "state": "completed",
+      "timestamp": "2025-11-17T08:20:00Z"
+    },
+    {
+      "key": "in_analysis",
+      "label": "In analysis",
+      "state": "completed",
+      "timestamp": "2025-11-17T10:45:00Z"
+    },
+    {
+      "key": "result_ready",
+      "label": "Result ready",
+      "state": "completed",
+      "timestamp": "2025-11-18T07:45:00Z"
+    },
+    {
+      "key": "physician_reviewed",
+      "label": "Physician reviewed",
+      "state": "completed",
+      "timestamp": "2025-11-18T13:30:00Z"
+    }
   ]
 }

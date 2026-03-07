@@ -228,7 +228,26 @@
               <strong>{{ preview[0] }}</strong>
               <span>{{ preview_id }}</span>
             </div>
-            <pre class="json-block json-block--large">{{ preview[1] }}</pre>
+            <div class="editor-shell">
+              <pre class="json-block json-block--large">{{ preview[1] }}</pre>
+              <form class="editor-form" action="/admin/save-document" method="post">
+                <input type="hidden" name="kind" value="{{ preview_kind }}" />
+                <input type="hidden" name="identifier" value="{{ preview_id }}" />
+                <div class="subpanel__header">
+                  <span class="detail-label">Edit JSON</span>
+                  <span class="helper-text">Save validates and persists the document immediately.</span>
+                </div>
+                <textarea
+                  class="editor-textarea mono"
+                  name="document_text"
+                  spellcheck="false"
+                >{{ preview[1] }}</textarea>
+                <div class="editor-actions">
+                  <button class="button button--primary" type="submit">Save JSON</button>
+                  <span class="helper-text">Edits can generate app events and patient notifications.</span>
+                </div>
+              </form>
+            </div>
           {% else %}
             <div class="empty-state">
               <h3>No preview selected</h3>

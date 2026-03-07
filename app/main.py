@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
+from datetime import datetime
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -159,6 +161,57 @@ async def admin_upload(
     )
 
 
+@app.post("/admin/save-document", response_class=HTMLResponse)
+async def admin_save_document(
+    request: Request,
+    kind: str = Form(...),
+    identifier: str = Form(...),
+    document_text: str = Form(...),
+) -> HTMLResponse:
+    try:
+        saved_kind, saved_identifier, payload = repository.save_document(
+            kind,
+            identifier,
+            document_text,
+        )
+        save_results = [
+            UploadOutcome(
+                filename=f"{saved_identifier}.json",
+                kind=saved_kind,
+                status="success",
+                message=f"Saved {saved_kind} '{saved_identifier}' successfully.",
+                preview=json.dumps(payload, indent=2),
+                records=1,
+            )
+        ]
+        preview_kind = saved_kind
+        preview_id = saved_identifier
+    except ValueError as exc:
+        save_results = [
+            UploadOutcome(
+                filename=f"{identifier}.json",
+                kind=kind,
+                status="error",
+                message=str(exc),
+                preview=document_text,
+                records=0,
+            )
+        ]
+        preview_kind = kind
+        preview_id = identifier
+
+    return templates.TemplateResponse(
+        request,
+        "admin_console.html",
+        _admin_context(
+            request,
+            upload_results=save_results,
+            preview_kind=preview_kind,
+            preview_id=preview_id,
+        ),
+    )
+
+
 @app.get("/admin/patients/{patient_id}/qr.png")
 def admin_patient_qr(patient_id: str) -> Response:
     patient = repository.patient_by_id(patient_id)
@@ -223,6 +276,21 @@ def result_detail(result_id: str, patient: dict = Depends(_current_patient)) -> 
         raise HTTPException(status_code=404, detail="Result not found")
 
     return result
+
+
+@app.get("/events")
+def list_events(
+    since: str | None = Query(default=None),
+    patient: dict = Depends(_current_patient),
+) -> dict[str, list[dict]]:
+    since_dt = None
+    if since is not None:
+        try:
+            since_dt = datetime.fromisoformat(since.replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Invalid 'since' timestamp") from exc
+
+    return {"events": repository.patient_events(patient, since_dt)}
 
 
 @app.post("/results/{result_id}/read")

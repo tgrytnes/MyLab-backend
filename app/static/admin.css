@@ -585,6 +585,41 @@ body {
   max-height: 620px;
 }
 
+.editor-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.editor-form {
+  display: grid;
+  gap: 14px;
+}
+
+.editor-textarea {
+  width: 100%;
+  min-height: 340px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: #10221f;
+  color: #d9f3ea;
+  padding: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  font: 0.9rem/1.65 "IBM Plex Mono", monospace;
+}
+
+.editor-textarea:focus {
+  outline: 2px solid rgba(15, 158, 144, 0.28);
+  outline-offset: 2px;
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 .empty-state {
   padding: 22px;
   border-radius: 24px;
